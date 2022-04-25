@@ -1,13 +1,11 @@
-// import * as tHistory from './transaction_history.json'
-// import * as rates from './rates.json'
+
 
 const tHistory=require('./transaction_history.json');
 const rates=require('./rates.json');
 
-let arr=[]
-let sum=0;
+let dailyData=[]
+let dailySum=0;
 
-// 2020-03-16T16:17:10.951Z
 const getDay=(date)=>{
     let arr1=date.split('T');
     let arr2=arr1[0].split('-');
@@ -20,7 +18,7 @@ for (let i = tHistory.length -1; i >= 0; i--) {
     const element = tHistory[i];
     let date=element.createdAt;
     let day=getDay(date);
-    let dupliacte=false;
+    let duplicate=false;
     if(i-1>=0)
     {
     let j=i-1;
@@ -28,7 +26,7 @@ for (let i = tHistory.length -1; i >= 0; i--) {
     let dayj=getDay(elementj.createdAt);
     if(dayj==day)
     {
-        let daysum=sum;
+        let daysum=dailySum;
         let currencyType=element.currency;
         let direction= element.direction;
         let amount=element.amount;
@@ -52,45 +50,45 @@ for (let i = tHistory.length -1; i >= 0; i--) {
     if(direction=="credit")
     {
         daysum+=cadamount;
-        dupliacte=true;
+        duplicate=true;
     }
     else if(direction=="debit"){
         daysum-=cadamount;
-        dupliacte=true;
+        duplicate=true;
     }
     j--;
     elementj=tHistory[j];
     dayj=getDay(elementj.createdAt);
     //arr.push({"date":date,"closing_balance":sum});
     }
-    if(dupliacte)
+    if(duplicate)
     {
-    arr.push({"date":date,"closing_balance":daysum});
-    sum=daysum;
+    dailyData.push({"date":date,"closing_balance":daysum});
+    dailySum=daysum;
     }
     i=j+1;
 }
     }
     
-if(!dupliacte)
+if(!duplicate)
 {
     let currencyType=element.currency;
     let direction= element.direction;
     let amount=element.amount;
-    let prevsum=sum;
+    let prevsum=dailySum;
     let cadamount= currencyType=="CAD"? amount:(currencyType=="BTC"? amount*(rates.BTC_CAD):(currencyType=="ETH"? amount*(rates.ETH_CAD):null))
     if(direction=="credit")
     {
-        sum=sum+cadamount;
+        dailySum=dailySum+cadamount;
     }
     else if(direction=="debit"){
-        sum=sum-cadamount;
+        dailySum=dailySum-cadamount;
     }
-    if(prevsum!=sum)
+    if(prevsum!=dailySum)
     {
-    arr.push({"date":date,"closing_balance":sum});
+    dailyData.push({"date":date,"closing_balance":dailySum});
     }
 }
 }
 
-module.exports=arr
+module.exports=dailyData
