@@ -15,8 +15,8 @@ const getDay=(date)=>{
 
 for (let i = tHistory.length -1; i >= 0; i--) {
     
-    const element = tHistory[i];
-    let date=element.createdAt;
+    const transaction = tHistory[i];
+    let date=transaction.createdAt;
     let day=getDay(date);
     let duplicate=false;
     if(i-1>=0)
@@ -27,9 +27,9 @@ for (let i = tHistory.length -1; i >= 0; i--) {
     if(dayj==day)
     {
         let daysum=dailySum;
-        let currencyType=element.currency;
-        let direction= element.direction;
-        let amount=element.amount;
+        let currencyType=transaction.currency;
+        let direction= transaction.direction;
+        let amount=transaction.amount;
         //let prevsum=sum;
         let cadamount= currencyType=="CAD"? amount:(currencyType=="BTC"? amount*(rates.BTC_CAD):(currencyType=="ETH"? amount*(rates.ETH_CAD):null))
         if(direction=="credit")
@@ -46,20 +46,19 @@ for (let i = tHistory.length -1; i >= 0; i--) {
     let direction= elementj.direction;
     let amount=elementj.amount;
 
-    let cadamount= currencyType=="CAD"? amount:(currencyType=="BTC"? amount*(rates.BTC_CAD):(currencyType=="ETH"? amount*(rates.ETH_CAD):null))
+    let cadAmount= currencyType=="CAD"? amount:(currencyType=="BTC"? amount*(rates.BTC_CAD):(currencyType=="ETH"? amount*(rates.ETH_CAD):null))
     if(direction=="credit")
     {
-        daysum+=cadamount;
+        daysum+=cadAmount;
         duplicate=true;
     }
     else if(direction=="debit"){
-        daysum-=cadamount;
+        daysum-=cadAmount;
         duplicate=true;
     }
     j--;
     elementj=tHistory[j];
     dayj=getDay(elementj.createdAt);
-    //arr.push({"date":date,"closing_balance":sum});
     }
     if(duplicate)
     {
@@ -72,9 +71,9 @@ for (let i = tHistory.length -1; i >= 0; i--) {
     
 if(!duplicate)
 {
-    let currencyType=element.currency;
-    let direction= element.direction;
-    let amount=element.amount;
+    let currencyType=transaction.currency;
+    let direction= transaction.direction;
+    let amount=transaction.amount;
     let prevsum=dailySum;
     let cadamount= currencyType=="CAD"? amount:(currencyType=="BTC"? amount*(rates.BTC_CAD):(currencyType=="ETH"? amount*(rates.ETH_CAD):null))
     if(direction=="credit")
